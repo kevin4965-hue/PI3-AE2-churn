@@ -1,6 +1,6 @@
 RESUMEN DEL DATAFRAME
 ============================================================
-Generado: 2026-10-25 14:00:54
+Generado: 2026-10-25 19:19:09
 
 Origen de los datos:
 - Dataset (Hugging Face): scikit-learn/churn-prediction
@@ -16,27 +16,27 @@ Dimensiones:
 Columnas, tipos y valores nulos:
                      tipo  nulos  valores_unicos
 columna                                         
-customerID         object      0            7043
-gender             object      0               2
+customerID            str      0            7043
+gender                str      0               2
 SeniorCitizen       int64      0               2
-Partner            object      0               2
-Dependents         object      0               2
+Partner               str      0               2
+Dependents            str      0               2
 tenure              int64      0              73
-PhoneService       object      0               2
-MultipleLines      object      0               3
-InternetService    object      0               3
-OnlineSecurity     object      0               3
-OnlineBackup       object      0               3
-DeviceProtection   object      0               3
-TechSupport        object      0               3
-StreamingTV        object      0               3
-StreamingMovies    object      0               3
-Contract           object      0               3
-PaperlessBilling   object      0               2
-PaymentMethod      object      0               4
+PhoneService          str      0               2
+MultipleLines         str      0               3
+InternetService       str      0               3
+OnlineSecurity        str      0               3
+OnlineBackup          str      0               3
+DeviceProtection      str      0               3
+TechSupport           str      0               3
+StreamingTV           str      0               3
+StreamingMovies       str      0               3
+Contract              str      0               3
+PaperlessBilling      str      0               2
+PaymentMethod         str      0               4
 MonthlyCharges    float64      0            1585
-TotalCharges       object      0            6531
-Churn              object      0               2
+TotalCharges          str      0            6531
+Churn                 str      0               2
 
 Estadísticas de las columnas numéricas:
        SeniorCitizen    tenure  MonthlyCharges
