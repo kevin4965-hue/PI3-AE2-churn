@@ -1,0 +1,50 @@
+RESUMEN DEL DATAFRAME
+============================================================
+Generado: 2026-10-25 13:55:40
+
+Origen de los datos:
+- Dataset (Hugging Face): scikit-learn/churn-prediction
+- Configuración: por defecto
+- Split: train
+- Muestra: no (split completo)
+
+Dimensiones:
+- Filas: 7043
+- Columnas: 21
+- Filas duplicadas: 0
+
+Columnas, tipos y valores nulos:
+                     tipo  nulos  valores_unicos
+columna                                         
+customerID         object      0            7043
+gender             object      0               2
+SeniorCitizen       int64      0               2
+Partner            object      0               2
+Dependents         object      0               2
+tenure              int64      0              73
+PhoneService       object      0               2
+MultipleLines      object      0               3
+InternetService    object      0               3
+OnlineSecurity     object      0               3
+OnlineBackup       object      0               3
+DeviceProtection   object      0               3
+TechSupport        object      0               3
+StreamingTV        object      0               3
+StreamingMovies    object      0               3
+Contract           object      0               3
+PaperlessBilling   object      0               2
+PaymentMethod      object      0               4
+MonthlyCharges    float64      0            1585
+TotalCharges       object      0            6531
+Churn              object      0               2
+
+Estadísticas de las columnas numéricas:
+       SeniorCitizen    tenure  MonthlyCharges
+count       7043.000  7043.000        7043.000
+mean           0.162    32.371          64.762
+std            0.369    24.559          30.090
+min            0.000     0.000          18.250
+25%            0.000     9.000          35.500
+50%            0.000    29.000          70.350
+75%            0.000    55.000          89.850
+max            1.000    72.000         118.750
