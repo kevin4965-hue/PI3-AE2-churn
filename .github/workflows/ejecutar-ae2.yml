@@ -1,4 +1,4 @@
-name: Ejecutar notebook AE2
+name: Ejecutar notebooks AE2 y AE3
 
 on:
   push:
@@ -47,14 +47,33 @@ jobs:
       - name: Verificar que el resumen se generó
         run: test -s AE2/resultados/resumen_dataframe.txt && head -20 AE2/resultados/resumen_dataframe.txt
 
+      - name: Borrar los resultados anteriores de AE3 (para comprobar que se regeneran)
+        run: rm -rf AE3/datos AE3/resultados
+
+      - name: Ejecutar AE3_transformacion_churn.ipynb
+        run: |
+          jupyter nbconvert \
+            --to notebook \
+            --execute \
+            --inplace \
+            --ExecutePreprocessor.timeout=1800 \
+            AE3/notebooks/AE3_transformacion_churn.ipynb
+
+      - name: Verificar que AE3 generó el dataset, las tablas y el resumen
+        run: |
+          test -s AE3/datos/churn_preparado.csv
+          test -s AE3/resultados/resumen_dataframe_final.txt
+          ls AE3/resultados/tablas/*.csv
+          head -20 AE3/resultados/resumen_dataframe_final.txt
+
       - name: Confirmar cambios generados
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add AE2/notebooks AE2/resultados
+          git add AE2/notebooks AE2/resultados AE3/notebooks AE3/datos AE3/resultados
           if git diff --cached --quiet; then
             echo "No se generaron cambios."
             exit 0
           fi
-          git commit -m "chore: actualizar resultados de AE2 [skip ci]"
+          git commit -m "chore: actualizar resultados de AE2 y AE3 [skip ci]"
           git push origin HEAD:main
