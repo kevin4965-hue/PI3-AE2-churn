@@ -218,3 +218,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Archivos temporales de Word y configuración local del editor
+~$*
+.vscode/
