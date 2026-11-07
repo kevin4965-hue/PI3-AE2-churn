@@ -1,24 +1,21 @@
-# PI3 — AE2: Ideación, diseño y documentación de la necesidad
+# PI3 — Proyecto integrador: abandono de clientes (churn)
 
-Primera etapa del proyecto integrador de Analítica de Datos.
+Proyecto integrador de Analítica de Datos.
 **Proyecto:** caracterización del abandono de clientes en una compañía de telecomunicaciones ficticia
 según tipo de contrato, antigüedad y facturación.
 
-## Propósito
-
-Definir y documentar una necesidad de analítica descriptiva a partir de un dataset de Hugging Face,
-y dejar listo el flujo técnico para obtener los datos, describirlos y generar un resumen automático en `.txt`.
+| Etapa | Carpeta | Contenido |
+|---|---|---|
+| AE2 · Ideación, diseño y documentación de la necesidad | [`AE2/`](AE2/) | Necesidad, diseño, carga y descripción básica del dataset |
+| AE3 · Transformación y enriquecimiento de datos | [`AE3/`](AE3/) | Limpieza, variables derivadas, respuestas a las preguntas y tablas exportadas |
 
 ## Necesidad
 
 **Escenario hipotético:** el equipo de retención de clientes de una compañía de telecomunicaciones necesita
 saber qué perfiles de cliente concentran las cancelaciones del servicio, para orientar sus campañas de fidelización.
 
-**Pregunta de análisis:** ¿cómo varía la proporción de clientes que abandonaron el servicio (`Churn`) según el tipo
+**Pregunta de análisis (AE2):** ¿cómo varía la proporción de clientes que abandonaron el servicio según el tipo
 de contrato, la antigüedad, el cargo mensual, el método de pago y el tipo de servicio de internet?
-
-El desarrollo completo (justificación, objetivos, marco teórico, ficha, diccionario, alcance y diseño) está en
-[`AE2/documento/AE2_Necesidad_Diseno_Churn.docx`](AE2/documento/AE2_Necesidad_Diseno_Churn.docx).
 
 ## Dataset
 
@@ -27,29 +24,90 @@ El desarrollo completo (justificación, objetivos, marco teórico, ficha, diccio
 | Identificador | `scikit-learn/churn-prediction` |
 | Enlace | https://huggingface.co/datasets/scikit-learn/churn-prediction |
 | Split | `train` (único disponible), configuración por defecto, **sin muestreo** |
-| Tamaño | 7 043 filas × 21 columnas (una fila = un cliente) |
-| Licencia | CC-BY-4.0 |
+| Tamaño original | 7 043 filas × 21 columnas (una fila = un cliente) |
+| Licencia | CC-BY-4.0 (permite redistribuir citando la fuente) |
 | Procedencia | IBM Sample Datasets. Compañía de telecomunicaciones **ficticia** (datos no reales) |
 | Fecha de consulta | 25 de octubre de 2026 |
 
-Los datos **no se guardan en el repositorio**: se descargan desde Hugging Face al ejecutar el notebook.
-El dataset es público y no requiere token.
+Los datos originales se descargan desde Hugging Face al ejecutar los notebooks; el dataset es público y no requiere token.
+El dataset **preparado** de la AE3 sí se publica en el repositorio. La licencia CC-BY-4.0 lo permite citando la fuente.
+
+## AE3 · Transformación y enriquecimiento
+
+### Preguntas de negocio abordadas
+
+La pregunta de AE2 se desglosó en seis preguntas, una por cada componente del diseño inicial:
+
+| # | Pregunta | Tabla de resultados |
+|---|---|---|
+| P1 | ¿Qué proporción de clientes abandonó y cuánto ingreso mensual representa? | `P1_resumen_general.csv` |
+| P2 | ¿Cómo varía el abandono según el tipo de contrato? | `P2_abandono_por_contrato.csv` |
+| P3 | ¿Cómo varía el abandono según la antigüedad del cliente? | `P3_abandono_por_antiguedad.csv` |
+| P4 | ¿Se diferencian en sus cargos los clientes que abandonan? | `P4a_abandono_por_cargo_mensual.csv`, `P4b_comparacion_cargos.csv` |
+| P5 | ¿Hay diferencias según el método de pago y el servicio de internet? | `P5a_abandono_por_metodo_pago.csv`, `P5b_abandono_por_internet.csv` |
+| P6 | ¿Qué segmentos (contrato × internet) concentran el abandono? | `P6_ranking_segmentos.csv` |
+
+**Hallazgo principal:** el 26,54 % de los clientes abandonó (30,50 % del ingreso mensual). El abandono se concentra en
+contratos mes a mes (42,71 %), clientes del primer año (47,44 %), fibra óptica (41,89 %) y pago con cheque electrónico
+(45,29 %). El segmento «Mes a mes | Fibra óptica» reúne el 62,17 % de los abandonos.
+
+### Transformaciones
+
+| Paso | Transformación | Registros afectados |
+|---|---|---|
+| 3.1 | `TotalCharges` convertido de texto a número | 7 043 |
+| 3.2 | 11 `TotalCharges` vacíos (clientes con 0 meses) reemplazados por 0 y marcados en `cargo_total_imputado` | 11 |
+| 3.3 | Control de nulos, duplicados (fila, ID y atributos) y espacios: sin problemas; 22 perfiles idénticos con distinto ID se conservan | 0 |
+| 3.4 | Control de coherencia entre servicios y entre cargo total y mensual: sin incoherencias | 0 |
+| 3.5 | Columnas en español (`snake_case`); Sí/No; «Sin servicio» unificado; contrato, internet y pago traducidos; contrato ordenado | 7 043 |
+| 3.6 | Se elimina `genero` (no responde ninguna pregunta); se conservan todos los registros | 0 |
+
+### Enriquecimiento (variables nuevas)
+
+| Variable | Regla |
+|---|---|
+| `abandono_num` | 1 si abandonó, 0 si no |
+| `rango_antiguedad` | Tramos de 12 meses (0–12 … 61–72) |
+| `rango_cargo_mensual` | Cuartiles del cargo mensual (Q1 a Q4) |
+| `num_servicios_adicionales` | Cantidad de servicios adicionales contratados (0–6) |
+| `pago_automatico` | Sí si paga con transferencia o tarjeta automática |
+| `ingreso_mensual_perdido` | Cargo mensual del cliente si abandonó; 0 si no |
+| `segmento` | `tipo_contrato` + `servicio_internet` |
+
+### Rutas de los resultados
+
+| Archivo | Ruta |
+|---|---|
+| Dataset preparado (7 043 × 28) | [`AE3/datos/churn_preparado.csv`](AE3/datos/churn_preparado.csv) |
+| Tablas de resultados (P1–P6) y bitácora | [`AE3/resultados/tablas/`](AE3/resultados/tablas/) |
+| Resumen descriptivo del DataFrame final | [`AE3/resultados/resumen_dataframe_final.txt`](AE3/resultados/resumen_dataframe_final.txt) |
+| Notebook ejecutado | [`AE3/notebooks/AE3_transformacion_churn.ipynb`](AE3/notebooks/AE3_transformacion_churn.ipynb) |
+| Documento actualizado | [`AE3/documento/AE3_Transformacion_Enriquecimiento_Churn.docx`](AE3/documento/AE3_Transformacion_Enriquecimiento_Churn.docx) |
+
+Los CSV se guardan en UTF-8 con BOM (`utf-8-sig`) para que Excel muestre bien las tildes.
 
 ## Estructura de archivos
 
 ```
+├── .github/workflows/
+│   └── ejecutar-ae2.yml                      # GitHub Action: ejecuta los notebooks de AE2 y AE3
 ├── AE2/
-│   ├── documento/
-│   │   └── AE2_Necesidad_Diseno_Churn.docx   # documento de la necesidad y el diseño
-│   ├── notebooks/
-│   │   └── AE2_exploracion_churn.ipynb       # carga, descripción básica y resumen .txt
+│   ├── documento/AE2_Necesidad_Diseno_Churn.docx
+│   ├── notebooks/AE2_exploracion_churn.ipynb
+│   └── resultados/resumen_dataframe.txt
+├── AE3/
+│   ├── datos/churn_preparado.csv             # dataset transformado y enriquecido
+│   ├── documento/AE3_Transformacion_Enriquecimiento_Churn.docx
+│   ├── notebooks/AE3_transformacion_churn.ipynb
 │   └── resultados/
-│       └── resumen_dataframe.txt             # resumen generado automáticamente por el notebook
+│       ├── resumen_dataframe_final.txt       # resumen .txt del DataFrame final
+│       └── tablas/                           # P1–P6 y bitácora de transformaciones (.csv)
 ├── src/
 │   └── clases_po/
 │       ├── __init__.py
 │       ├── hf_loader.py                      # clase HFDatasetLoader: obtiene el DataFrame
-│       └── reportes.py                       # clase Reportes: genera el resumen .txt
+│       ├── indicadores.py                    # función tabla_abandono: tasas por grupo
+│       └── reportes.py                       # clase Reportes: genera los resúmenes .txt
 ├── requirements.txt
 └── README.md
 ```
@@ -77,20 +135,25 @@ El dataset es público y no requiere token.
    pip install -r requirements.txt
    ```
 
-3. Abrir el notebook y ejecutar todas las celdas en orden (**Kernel → Restart & Run All**):
+3. Ejecutar los notebooks en orden: todas las celdas de cada uno con **Kernel → Restart & Run All**.
 
    ```bash
    jupyter notebook AE2/notebooks/AE2_exploracion_churn.ipynb
+   jupyter notebook AE3/notebooks/AE3_transformacion_churn.ipynb
    ```
 
-4. Al terminar, el notebook crea (o regenera) `AE2/resultados/resumen_dataframe.txt` en UTF-8. La última celda
-   comprueba que el archivo corresponde al DataFrame revisado.
+   O desde la terminal, sin abrir Jupyter:
 
-También se puede ejecutar todo desde la terminal, sin abrir Jupyter:
+   ```bash
+   jupyter nbconvert --to notebook --execute --inplace AE2/notebooks/AE2_exploracion_churn.ipynb
+   jupyter nbconvert --to notebook --execute --inplace AE3/notebooks/AE3_transformacion_churn.ipynb
+   ```
 
-```bash
-jupyter nbconvert --to notebook --execute --inplace AE2/notebooks/AE2_exploracion_churn.ipynb
-```
+4. El notebook de AE3 regenera en cada ejecución el dataset preparado, las tablas `.csv` y
+   `resumen_dataframe_final.txt`. También comprueba que los totales y porcentajes sean consistentes y que los
+   archivos exportados coincidan con lo calculado.
+
+El GitHub Action (`.github/workflows/ejecutar-ae2.yml`) ejecuta ambos notebooks en cada `push` a `main`.
 
 ## Uso de las clases
 
@@ -98,12 +161,14 @@ jupyter nbconvert --to notebook --execute --inplace AE2/notebooks/AE2_exploracio
 import sys
 sys.path.insert(0, "src")
 
-from clases_po import HFDatasetLoader, Reportes
+from clases_po import HFDatasetLoader, Reportes, tabla_abandono
 
 loader = HFDatasetLoader("scikit-learn/churn-prediction", split="train")
 df = loader.load()
 
 Reportes(origen=loader.info()).guardar_reporte(df, "AE2/resultados/resumen_dataframe.txt")
+# Con un DataFrame preparado (columnas abandono_num y cargo_mensual):
+# tabla_abandono(df_preparado, "tipo_contrato")
 ```
 
 Para un dataset privado, inicia sesión con `hf auth login`. `HFDatasetLoader` usará esa sesión automáticamente.
