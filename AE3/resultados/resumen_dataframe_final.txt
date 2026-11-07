@@ -1,6 +1,6 @@
 RESUMEN DEL DATAFRAME
 ============================================================
-Generado: 2026-11-07 11:58:08
+Generado: 2026-11-07 17:26:24
 
 Origen de los datos:
 - Dataset (Hugging Face): scikit-learn/churn-prediction
@@ -16,7 +16,7 @@ Dimensiones:
 Columnas, tipos y valores nulos:
                                tipo  nulos  valores_unicos
 columna                                                   
-id_cliente                   object      0            7043
+id_cliente                      str      0            7043
 adulto_mayor               category      0               2
 tiene_pareja               category      0               2
 tiene_dependientes         category      0               2
