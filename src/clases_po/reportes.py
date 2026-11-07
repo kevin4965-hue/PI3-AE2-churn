@@ -14,11 +14,15 @@ class Reportes:
         origen: Diccionario opcional con el origen de los datos (por ejemplo,
             el resultado de ``HFDatasetLoader.info()``): dataset, config,
             split y si se usó una muestra. Se escribe al inicio del reporte.
+        incluir_categoricas: Si es True, agrega las frecuencias de las columnas
+            de texto o categoría (hasta 10 valores por columna).
     """
 
-    def __init__(self, origen: dict | None = None) -> None:
+    def __init__(self, origen: dict | None = None, incluir_categoricas: bool = False) -> None:
         # Si no nos dan el origen, usamos un diccionario vacío.
         self.origen = origen or {}
+        # Por defecto no se incluyen frecuencias (así el reporte de AE2 no cambia).
+        self.incluir_categoricas = incluir_categoricas
 
     def generar_reporte(self, df: pd.DataFrame) -> str:
         """Genera el contenido textual del reporte."""
@@ -57,6 +61,16 @@ class Reportes:
                 "Estadísticas de las columnas numéricas:",
                 numericas.describe().round(3).to_string(),
             ]
+
+        # Si se pidió, agregamos cuántas veces aparece cada valor en las columnas de texto.
+        if self.incluir_categoricas:
+            categoricas = df.select_dtypes(include=["object", "category"])
+            for columna in categoricas.columns:
+                # Una columna con un valor distinto por fila (como un ID) no se resume.
+                if df[columna].nunique() == len(df):
+                    continue
+                conteo = df[columna].value_counts().head(10)
+                lineas += ["", f"Frecuencias de '{columna}':", conteo.to_string()]
 
         # Unimos todas las líneas en un solo texto.
         return "\n".join(lineas) + "\n"
