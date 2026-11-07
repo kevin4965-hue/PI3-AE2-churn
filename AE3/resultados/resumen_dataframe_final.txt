@@ -1,0 +1,181 @@
+RESUMEN DEL DATAFRAME
+============================================================
+Generado: 2026-11-07 11:47:39
+
+Origen de los datos:
+- Dataset (Hugging Face): scikit-learn/churn-prediction
+- Configuración: por defecto
+- Split: train
+- Muestra: no (split completo); DataFrame transformado y enriquecido en AE3
+
+Dimensiones:
+- Filas: 7043
+- Columnas: 28
+- Filas duplicadas: 0
+
+Columnas, tipos y valores nulos:
+                               tipo  nulos  valores_unicos
+columna                                                   
+id_cliente                   object      0            7043
+adulto_mayor               category      0               2
+tiene_pareja               category      0               2
+tiene_dependientes         category      0               2
+antiguedad_meses              int64      0              73
+servicio_telefonico        category      0               2
+lineas_multiples           category      0               3
+servicio_internet          category      0               3
+seguridad_en_linea         category      0               3
+respaldo_en_linea          category      0               3
+proteccion_dispositivos    category      0               3
+soporte_tecnico            category      0               3
+tv_streaming               category      0               3
+peliculas_streaming        category      0               3
+tipo_contrato              category      0               3
+factura_electronica        category      0               2
+metodo_pago                category      0               4
+cargo_mensual               float64      0            1585
+cargo_total                 float64      0            6531
+abandono                   category      0               2
+cargo_total_imputado           bool      0               2
+abandono_num                  int64      0               2
+rango_antiguedad           category      0               6
+rango_cargo_mensual        category      0               4
+num_servicios_adicionales     int64      0               7
+pago_automatico            category      0               2
+ingreso_mensual_perdido     float64      0             911
+segmento                   category      0               9
+
+Estadísticas de las columnas numéricas:
+       antiguedad_meses  cargo_mensual  cargo_total  abandono_num  num_servicios_adicionales  ingreso_mensual_perdido
+count          7043.000       7043.000     7043.000      7043.000                   7043.000                 7043.000
+mean             32.371         64.762     2279.734         0.265                      2.038                   19.754
+std              24.559         30.090     2266.794         0.442                      1.848                   35.240
+min               0.000         18.250        0.000         0.000                      0.000                    0.000
+25%               9.000         35.500      398.550         0.000                      0.000                    0.000
+50%              29.000         70.350     1394.550         0.000                      2.000                    0.000
+75%              55.000         89.850     3786.600         1.000                      3.000                   24.100
+max              72.000        118.750     8684.800         1.000                      6.000                  118.350
+
+Frecuencias de 'adulto_mayor':
+adulto_mayor
+No    5901
+Sí    1142
+
+Frecuencias de 'tiene_pareja':
+tiene_pareja
+No    3641
+Sí    3402
+
+Frecuencias de 'tiene_dependientes':
+tiene_dependientes
+No    4933
+Sí    2110
+
+Frecuencias de 'servicio_telefonico':
+servicio_telefonico
+Sí    6361
+No     682
+
+Frecuencias de 'lineas_multiples':
+lineas_multiples
+No              3390
+Sí              2971
+Sin servicio     682
+
+Frecuencias de 'servicio_internet':
+servicio_internet
+Fibra óptica    3096
+DSL             2421
+Sin internet    1526
+
+Frecuencias de 'seguridad_en_linea':
+seguridad_en_linea
+No              3498
+Sí              2019
+Sin servicio    1526
+
+Frecuencias de 'respaldo_en_linea':
+respaldo_en_linea
+No              3088
+Sí              2429
+Sin servicio    1526
+
+Frecuencias de 'proteccion_dispositivos':
+proteccion_dispositivos
+No              3095
+Sí              2422
+Sin servicio    1526
+
+Frecuencias de 'soporte_tecnico':
+soporte_tecnico
+No              3473
+Sí              2044
+Sin servicio    1526
+
+Frecuencias de 'tv_streaming':
+tv_streaming
+No              2810
+Sí              2707
+Sin servicio    1526
+
+Frecuencias de 'peliculas_streaming':
+peliculas_streaming
+No              2785
+Sí              2732
+Sin servicio    1526
+
+Frecuencias de 'tipo_contrato':
+tipo_contrato
+Mes a mes    3875
+Dos años     1695
+Un año       1473
+
+Frecuencias de 'factura_electronica':
+factura_electronica
+Sí    4171
+No    2872
+
+Frecuencias de 'metodo_pago':
+metodo_pago
+Cheque electrónico                     2365
+Cheque por correo                      1612
+Transferencia bancaria (automática)    1544
+Tarjeta de crédito (automática)        1522
+
+Frecuencias de 'abandono':
+abandono
+No    5174
+Sí    1869
+
+Frecuencias de 'rango_antiguedad':
+rango_antiguedad
+0-12 meses     2186
+61-72 meses    1407
+13-24 meses    1024
+25-36 meses     832
+49-60 meses     832
+37-48 meses     762
+
+Frecuencias de 'rango_cargo_mensual':
+rango_cargo_mensual
+Q2 Medio-bajo (35.50-70.35)    1766
+Q1 Bajo (18.25-35.50)          1762
+Q4 Alto (89.85-118.75)         1758
+Q3 Medio-alto (70.35-89.85)    1757
+
+Frecuencias de 'pago_automatico':
+pago_automatico
+No    3977
+Sí    3066
+
+Frecuencias de 'segmento':
+segmento
+Mes a mes | Fibra óptica    2128
+Mes a mes | DSL             1223
+Dos años | Sin internet      638
+Dos años | DSL               628
+Un año | DSL                 570
+Un año | Fibra óptica        539
+Mes a mes | Sin internet     524
+Dos años | Fibra óptica      429
+Un año | Sin internet        364

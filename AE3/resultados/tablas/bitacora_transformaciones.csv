@@ -1,0 +1,8 @@
+﻿paso,accion,registros_afectados,justificacion
+3.1,TotalCharges convertido de texto a número (float),7043,Es un monto; como texto no permite sumar ni promediar.
+3.2,TotalCharges vacío reemplazado por 0 y marcado en cargo_total_imputado,11,Los 11 casos tienen antigüedad 0: aún no acumulan cargos.
+3.3,"Control de nulos, duplicados (fila, ID y atributos) y espacios",0,Sin problemas; 22 perfiles idénticos con distinto ID se conservan por ser clientes distintos.
+3.4,Control de coherencia entre servicios y entre cargo total y mensual,0,Sin incoherencias; las diferencias de cargo se explican por cambios de tarifa.
+3.5,"Columnas renombradas a español y categorías normalizadas (Sí/No, Sin servicio, traducciones)",7043,Formato uniforme y legible para las tablas y gráficas de AE4.
+3.6,Se elimina la columna genero; se conservan los 7 043 registros,0,genero no responde ninguna pregunta de negocio; no hay registros fuera del alcance.
+4,"Se agregan 7 variables derivadas (abandono_num, rangos, servicios, pago automático, ingreso perdido, segmento)",7043,"Permiten calcular tasas, comparar por tramos y priorizar segmentos."

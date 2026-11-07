@@ -1,0 +1,10 @@
+﻿ranking,tipo_contrato,servicio_internet,clientes,abandonos,tasa_abandono_pct,participacion_clientes_pct,participacion_abandonos_pct,cargo_mensual_promedio,ingreso_mensual_perdido,participacion_ingreso_perdido_pct
+1,Mes a mes,Fibra óptica,2128,1162,54.61,30.21,62.17,87.02,100482.0,72.22
+2,Mes a mes,DSL,1223,394,32.22,17.36,21.08,50.22,18367.25,13.2
+3,Un año,Fibra óptica,539,104,19.29,7.65,5.56,98.78,10571.95,7.6
+4,Mes a mes,Sin internet,524,99,18.89,7.44,5.3,20.41,1997.85,1.44
+5,Un año,DSL,570,53,9.3,8.09,2.84,61.4,3356.25,2.41
+6,Dos años,Fibra óptica,429,31,7.23,6.09,1.66,104.57,3246.1,2.33
+7,Un año,Sin internet,364,9,2.47,5.17,0.48,20.82,190.25,0.14
+8,Dos años,DSL,628,12,1.91,8.92,0.64,70.46,805.7,0.58
+9,Dos años,Sin internet,638,5,0.78,9.06,0.27,21.78,113.5,0.08

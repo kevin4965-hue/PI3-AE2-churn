@@ -1,0 +1,5 @@
+﻿metodo_pago,clientes,abandonos,tasa_abandono_pct,participacion_clientes_pct,participacion_abandonos_pct,cargo_mensual_promedio,ingreso_mensual_perdido,participacion_ingreso_perdido_pct
+Cheque electrónico,2365,1071,45.29,33.58,57.3,76.26,84288.75,60.58
+Cheque por correo,1612,308,19.11,22.89,16.48,43.92,16803.6,12.08
+Transferencia bancaria (automática),1544,258,16.71,21.92,13.8,67.19,20091.9,14.44
+Tarjeta de crédito (automática),1522,232,15.24,21.61,12.41,66.51,17946.6,12.9

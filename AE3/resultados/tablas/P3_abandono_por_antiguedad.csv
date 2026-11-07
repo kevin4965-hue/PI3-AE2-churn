@@ -1,0 +1,7 @@
+﻿rango_antiguedad,clientes,abandonos,tasa_abandono_pct,participacion_clientes_pct,participacion_abandonos_pct,cargo_mensual_promedio,ingreso_mensual_perdido,participacion_ingreso_perdido_pct
+0-12 meses,2186,1037,47.44,31.04,55.48,56.1,68954.25,49.56
+13-24 meses,1024,294,28.71,14.54,15.73,61.36,23081.65,16.59
+25-36 meses,832,180,21.63,11.81,9.63,65.58,15167.95,10.9
+37-48 meses,762,145,19.03,10.82,7.76,66.32,12294.55,8.84
+49-60 meses,832,120,14.42,11.81,6.42,70.55,10581.9,7.61
+61-72 meses,1407,93,6.61,19.98,4.98,75.95,9050.55,6.51
