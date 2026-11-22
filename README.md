@@ -161,7 +161,6 @@ Los CSV se guardan en UTF-8 con BOM (`utf-8-sig`) para que Excel muestre bien la
 │   │   ├── Informe_Final_PI3_Abandono_Clientes.docx
 │   │   └── Informe_Final_PI3_Abandono_Clientes.pdf   # informe completo del proyecto
 │   ├── notebooks/AE4_metricas_visualizacion.ipynb
-│   ├── presentacion/guion_presentacion.md    # guion de la presentación de 10 minutos
 │   └── resultados/
 │       ├── graficos/                         # gráficos PNG del informe
 │       └── metricas_por_pregunta.csv

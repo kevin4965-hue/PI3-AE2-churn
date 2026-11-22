@@ -222,3 +222,6 @@ __marimo__/
 # Archivos temporales de Word y configuración local del editor
 ~$*
 .vscode/
+
+# Guion de la presentacion (solo local, no se sube)
+AE4/presentacion/guion_presentacion.md
