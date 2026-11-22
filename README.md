@@ -10,7 +10,7 @@ según tipo de contrato, antigüedad y facturación.
 | AE3 · Transformación y enriquecimiento de datos | [`AE3/`](AE3/) | Limpieza, variables derivadas, respuestas a las preguntas y tablas exportadas |
 | AE4 · Métricas y visualización de datos | [`AE4/`](AE4/) | Aplicación de Streamlit, gráficos, métricas e informe final en PDF |
 
-**Aplicación de Streamlit:** _[COMPLETAR con el enlace de Streamlit Community Cloud]_ ·
+**Aplicación de Streamlit:** [pi3-abandono-clientes.streamlit.app](https://pi3-abandono-clientes.streamlit.app/) ·
 **Informe final (PDF):** [`AE4/documento/Informe_Final_PI3_Abandono_Clientes.pdf`](AE4/documento/Informe_Final_PI3_Abandono_Clientes.pdf)
 
 ## AE4 · Métricas y visualización
