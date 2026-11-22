@@ -22,7 +22,8 @@ La aplicación [`AE4/app/streamlit_app.py`](AE4/app/streamlit_app.py) presenta e
 | Sección | Contenido |
 |---|---|
 | Inicio | Necesidad, pregunta de análisis, preguntas de negocio, dataset, indicadores generales y verificación de cifras |
-| P1 a P6 | Indicadores, gráficos interactivos, cálculo y unidad de cada métrica, respuesta, decisión que apoya, limitación y tabla de datos |
+| Respuestas en resumen | Las 6 preguntas en una sola página: gráfico + respuesta sencilla de cada una |
+| P1 a P6 | Respuesta «En pocas palabras», indicadores, gráficos interactivos, cálculo y unidad de cada métrica, respuesta, decisión que apoya, limitación y tabla de datos |
 | Explorador de segmentos | Filtros por contrato, internet, método de pago y antigüedad; métricas recalculadas en vivo |
 | Conclusiones | Conclusiones, recomendaciones y limitaciones |
 
