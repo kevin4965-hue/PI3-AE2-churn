@@ -3,6 +3,7 @@
 Ejecutar desde la raíz del proyecto:
     streamlit run AE4/app/streamlit_app.py
 """
+import inspect
 import sys
 from pathlib import Path
 
@@ -90,7 +91,7 @@ def estilo(fig, alto=380):
     return fig
 
 
-def barras_tasa(tabla, columna, titulo, etiqueta, horizontal=False):
+def barras_tasa(tabla, columna, titulo, etiqueta, horizontal=False, alto=None):
     """Barras de tasa de abandono por grupo, con la tasa general como línea de referencia."""
     t = tabla.copy()
     if not horizontal:
@@ -120,14 +121,26 @@ def barras_tasa(tabla, columna, titulo, etiqueta, horizontal=False):
                              name=f"Tasa general {fmt(C.TASA_GENERAL)} %"))
     fig.update_traces(textposition="outside", cliponaxis=False, selector=dict(type="bar"), width=0.6)
     fig.update_layout(showlegend=True)
-    return estilo(fig, 420 if horizontal and len(t) > 5 else 380)
+    if alto is None:
+        alto = 420 if horizontal and len(t) > 5 else 380
+    return estilo(fig, alto)
+
+
+# Streamlit 1.52+ usa width="stretch"; las versiones anteriores, use_container_width=True.
+ANCHO_PLOTLY = ({"width": "stretch"} if "width" in inspect.signature(st.plotly_chart).parameters
+                else {"use_container_width": True})
+
+
+def grafico(fig, key=None):
+    """Muestra un gráfico de Plotly ocupando todo el ancho disponible."""
+    st.plotly_chart(fig, key=key, **ANCHO_PLOTLY)
 
 
 def ficha_metricas(clave):
     """Muestra cómo se calcula cada métrica de la pregunta y en qué unidad se expresa."""
     with st.expander("📐 Métricas: cálculo y unidad"):
         st.dataframe(pd.DataFrame(C.PREGUNTAS[clave]["metricas"], columns=["Métrica", "Cálculo", "Unidad"]),
-                     hide_index=True, width="stretch")
+                     hide_index=True)
 
 
 def respuesta(clave):
@@ -149,6 +162,48 @@ def encabezado(clave):
     p = C.PREGUNTAS[clave]
     st.header(f"{clave}. {p['titulo']}")
     st.markdown(f"#### {p['pregunta']}")
+    # Respuesta sencilla, antes del detalle.
+    st.info(f"**En pocas palabras:** {p['respuesta_corta']}", icon="💡")
+
+
+def grafico_p1(p1, alto=300, titulo="Quienes abandonan pesan más en el ingreso que en la cantidad de clientes"):
+    """Barras 100 % apiladas: la misma división (permanece / abandonó) medida en clientes y en ingreso."""
+    datos = pd.DataFrame({
+        "Medida": ["Clientes", "Clientes", "Ingreso mensual", "Ingreso mensual"],
+        "Grupo": ["Permanece", "Abandonó", "Permanece", "Abandonó"],
+        "Porcentaje": [100 - p1["tasa_abandono_pct"], p1["tasa_abandono_pct"],
+                       100 - p1["ingreso_perdido_pct"], p1["ingreso_perdido_pct"]],
+    })
+    datos["texto"] = datos["Porcentaje"].map(lambda v: f"{fmt(v)} %")
+    fig = px.bar(datos, y="Medida", x="Porcentaje", color="Grupo", orientation="h", text="texto",
+                 title=titulo,
+                 color_discrete_map={"Permanece": C.AZUL, "Abandonó": C.NARANJA},
+                 labels={"Porcentaje": "Porcentaje del total (%)", "Medida": ""},
+                 hover_data={"texto": False, "Porcentaje": ":.2f"})
+    fig.update_traces(marker_line_color="white", marker_line_width=2, insidetextanchor="middle")
+    fig.update_xaxes(range=[0, 100])
+    return estilo(fig, alto)
+
+
+def tabla_p2(tablas):
+    """Tabla P2 en el orden lógico del contrato (de menor a mayor compromiso)."""
+    t = tablas["P2_abandono_por_contrato"].copy()
+    t["tipo_contrato"] = pd.Categorical(t["tipo_contrato"], ["Mes a mes", "Un año", "Dos años"], ordered=True)
+    return t.sort_values("tipo_contrato")
+
+
+def tabla_p3(tablas):
+    """Tabla P3 ordenada por antigüedad (0-12, 13-24, ...)."""
+    t = tablas["P3_abandono_por_antiguedad"].copy()
+    t["orden"] = t["rango_antiguedad"].str.split("-").str[0].astype(int)
+    return t.sort_values("orden").drop(columns="orden")
+
+
+def tabla_p6(tablas):
+    """Tabla P6 con una columna 'segmento' (contrato | internet)."""
+    t = tablas["P6_ranking_segmentos"].copy()
+    t["segmento"] = t["tipo_contrato"] + " | " + t["servicio_internet"]
+    return t
 
 
 # ---------------------------------------------------------------------------
@@ -200,22 +255,7 @@ def pagina_p1(df, tablas):
     c3.metric("Ingreso mensual perdido", fmt(p1["ingreso_mensual_perdido"]), help="Unidades monetarias por mes")
     c4.metric("% del ingreso mensual", f"{fmt(p1['ingreso_perdido_pct'])} %")
 
-    # Barras 100 % apiladas: misma división medida en clientes y en ingreso.
-    datos = pd.DataFrame({
-        "Medida": ["Clientes", "Clientes", "Ingreso mensual", "Ingreso mensual"],
-        "Grupo": ["Permanece", "Abandonó", "Permanece", "Abandonó"],
-        "Porcentaje": [100 - p1["tasa_abandono_pct"], p1["tasa_abandono_pct"],
-                       100 - p1["ingreso_perdido_pct"], p1["ingreso_perdido_pct"]],
-    })
-    datos["texto"] = datos["Porcentaje"].map(lambda v: f"{fmt(v)} %")
-    fig = px.bar(datos, y="Medida", x="Porcentaje", color="Grupo", orientation="h", text="texto",
-                 title="Quienes abandonan pesan más en el ingreso que en la cantidad de clientes",
-                 color_discrete_map={"Permanece": C.AZUL, "Abandonó": C.NARANJA},
-                 labels={"Porcentaje": "Porcentaje del total (%)", "Medida": ""},
-                 hover_data={"texto": False, "Porcentaje": ":.2f"})
-    fig.update_traces(marker_line_color="white", marker_line_width=2, insidetextanchor="middle")
-    fig.update_xaxes(range=[0, 100])
-    st.plotly_chart(estilo(fig, 300), width="stretch")
+    grafico(grafico_p1(p1))
     ficha_metricas("P1")
     respuesta("P1")
     ver_tabla(tablas["P1_resumen_general"], "P1_resumen_general")
@@ -223,17 +263,14 @@ def pagina_p1(df, tablas):
 
 def pagina_p2(df, tablas):
     encabezado("P2")
-    t = tablas["P2_abandono_por_contrato"].copy()
-    t["tipo_contrato"] = pd.Categorical(t["tipo_contrato"], ["Mes a mes", "Un año", "Dos años"], ordered=True)
-    t = t.sort_values("tipo_contrato")
+    t = tabla_p2(tablas)
     mm = t[t["tipo_contrato"] == "Mes a mes"].iloc[0]
     c1, c2, c3 = st.columns(3)
     c1.metric("Tasa en contrato mes a mes", f"{fmt(mm['tasa_abandono_pct'])} %",
               delta=f"{fmt(mm['tasa_abandono_pct'] - C.TASA_GENERAL)} pp vs. general", delta_color="inverse")
     c2.metric("Participación en los abandonos", f"{fmt(mm['participacion_abandonos_pct'])} %")
     c3.metric("Participación en el ingreso perdido", f"{fmt(mm['participacion_ingreso_perdido_pct'])} %")
-    st.plotly_chart(barras_tasa(t, "tipo_contrato", "Tasa de abandono por tipo de contrato", "Tipo de contrato"),
-                    width="stretch")
+    grafico(barras_tasa(t, "tipo_contrato", "Tasa de abandono por tipo de contrato", "Tipo de contrato"))
     ficha_metricas("P2")
     respuesta("P2")
     ver_tabla(t, "P2_abandono_por_contrato")
@@ -241,17 +278,15 @@ def pagina_p2(df, tablas):
 
 def pagina_p3(df, tablas):
     encabezado("P3")
-    t = tablas["P3_abandono_por_antiguedad"].copy()
-    t["orden"] = t["rango_antiguedad"].str.split("-").str[0].astype(int)
-    t = t.sort_values("orden").drop(columns="orden")
+    t = tabla_p3(tablas)
     primero, ultimo = t.iloc[0], t.iloc[-1]
     c1, c2, c3 = st.columns(3)
     c1.metric("Tasa en el primer año", f"{fmt(primero['tasa_abandono_pct'])} %")
     c2.metric("Tasa con 61-72 meses", f"{fmt(ultimo['tasa_abandono_pct'])} %")
     c3.metric("Abandonos del primer año", f"{fmt(primero['participacion_abandonos_pct'])} %",
               help="Participación del primer año en el total de abandonos")
-    st.plotly_chart(barras_tasa(t, "rango_antiguedad", "Tasa de abandono por antigüedad del cliente",
-                                "Antigüedad (meses)"), width="stretch")
+    grafico(barras_tasa(t, "rango_antiguedad", "Tasa de abandono por antigüedad del cliente",
+                                "Antigüedad (meses)"))
     ficha_metricas("P3")
     respuesta("P3")
     ver_tabla(t, "P3_abandono_por_antiguedad")
@@ -270,8 +305,8 @@ def pagina_p4(df, tablas):
 
     izq, der = st.columns(2)
     with izq:
-        st.plotly_chart(barras_tasa(t, "rango_cargo_mensual", "Tasa de abandono por cuartil de cargo mensual",
-                                    "Cuartil de cargo mensual (unidades monetarias/mes)"), width="stretch")
+        grafico(barras_tasa(t, "rango_cargo_mensual", "Tasa de abandono por cuartil de cargo mensual",
+                                    "Cuartil de cargo mensual (unidades monetarias/mes)"))
     with der:
         fig = px.box(df, x="cargo_mensual", y="abandono", color="abandono", orientation="h",
                      category_orders={"abandono": ["Sí", "No"]},
@@ -279,7 +314,7 @@ def pagina_p4(df, tablas):
                      labels={"cargo_mensual": "Cargo mensual (unidades monetarias/mes)", "abandono": "¿Abandonó?"},
                      title="Distribución del cargo mensual según abandono")
         fig.update_layout(showlegend=False)
-        st.plotly_chart(estilo(fig), width="stretch")
+        grafico(estilo(fig))
     ficha_metricas("P4")
     respuesta("P4")
     ver_tabla(t, "P4a_abandono_por_cargo_mensual")
@@ -298,11 +333,11 @@ def pagina_p5(df, tablas):
     c4.metric("Tasa · fibra óptica", f"{fmt(internet.iloc[0]['tasa_abandono_pct'])} %")
     izq, der = st.columns(2)
     with izq:
-        st.plotly_chart(barras_tasa(pago, "metodo_pago", "Tasa de abandono por método de pago", "Método de pago",
-                                    horizontal=True), width="stretch")
+        grafico(barras_tasa(pago, "metodo_pago", "Tasa de abandono por método de pago", "Método de pago",
+                                    horizontal=True))
     with der:
-        st.plotly_chart(barras_tasa(internet, "servicio_internet", "Tasa de abandono por servicio de internet",
-                                    "Servicio de internet"), width="stretch")
+        grafico(barras_tasa(internet, "servicio_internet", "Tasa de abandono por servicio de internet",
+                                    "Servicio de internet"))
     ficha_metricas("P5")
     respuesta("P5")
     ver_tabla(pago, "P5a_abandono_por_metodo_pago")
@@ -311,8 +346,7 @@ def pagina_p5(df, tablas):
 
 def pagina_p6(df, tablas):
     encabezado("P6")
-    t = tablas["P6_ranking_segmentos"].copy()
-    t["segmento"] = t["tipo_contrato"] + " | " + t["servicio_internet"]
+    t = tabla_p6(tablas)
     top = t.iloc[0]
     c1, c2, c3 = st.columns(3)
     c1.metric(f"Tasa · {top['segmento']}", f"{fmt(top['tasa_abandono_pct'])} %")
@@ -322,8 +356,8 @@ def pagina_p6(df, tablas):
     medida = st.radio("Ordenar y mostrar por:", ["Tasa de abandono", "Participación en los abandonos",
                                                   "Participación en el ingreso perdido"], horizontal=True)
     if medida == "Tasa de abandono":
-        st.plotly_chart(barras_tasa(t, "segmento", "Ranking de segmentos por tasa de abandono",
-                                    "Segmento (contrato | internet)", horizontal=True), width="stretch")
+        grafico(barras_tasa(t, "segmento", "Ranking de segmentos por tasa de abandono",
+                                    "Segmento (contrato | internet)", horizontal=True))
     else:
         col = "participacion_abandonos_pct" if medida == "Participación en los abandonos" else \
             "participacion_ingreso_perdido_pct"
@@ -336,10 +370,59 @@ def pagina_p6(df, tablas):
         fig.update_yaxes(categoryorder="array", categoryarray=list(orden["segmento"])[::-1])
         fig.update_xaxes(range=[0, orden[col].max() * 1.2], showgrid=True, gridcolor="rgba(128,128,128,0.18)")
         fig.update_traces(textposition="outside", cliponaxis=False, width=0.6)
-        st.plotly_chart(estilo(fig, 420), width="stretch")
+        grafico(estilo(fig, 420))
     ficha_metricas("P6")
     respuesta("P6")
     ver_tabla(t.drop(columns="segmento"), "P6_ranking_segmentos")
+
+
+def pagina_respuestas(df, tablas):
+    """Todas las preguntas en una sola página: gráfico + respuesta sencilla."""
+    st.title("✅ Respuestas en resumen")
+    st.write("Cada pregunta de negocio con su gráfico y una respuesta sencilla. "
+             "El detalle (métricas, decisión y limitaciones) está en la sección de cada pregunta.")
+
+    p1 = tablas["P1_resumen_general"].iloc[0]
+    pago = tablas["P5a_abandono_por_metodo_pago"]
+    internet = tablas["P5b_abandono_por_internet"]
+    # Gráfico (o gráficos) de cada pregunta, en versión compacta.
+    graficos = {
+        "P1": [("", grafico_p1(p1, alto=260, titulo="Clientes e ingreso según abandono"))],
+        "P2": [("", barras_tasa(tabla_p2(tablas), "tipo_contrato", "Tasa de abandono por tipo de contrato",
+                                "Tipo de contrato", alto=330))],
+        "P3": [("", barras_tasa(tabla_p3(tablas), "rango_antiguedad", "Tasa de abandono por antigüedad",
+                                "Antigüedad (meses)", alto=330))],
+        "P4": [("", barras_tasa(tablas["P4a_abandono_por_cargo_mensual"], "rango_cargo_mensual",
+                                "Tasa de abandono por cuartil de cargo mensual",
+                                "Cuartil de cargo mensual (unidades monetarias/mes)", alto=350))],
+        "P5": [("Método de pago", barras_tasa(pago, "metodo_pago", "Tasa de abandono por método de pago",
+                                              "Método de pago", horizontal=True, alto=330)),
+               ("Servicio de internet", barras_tasa(internet, "servicio_internet",
+                                                    "Tasa de abandono por servicio de internet",
+                                                    "Servicio de internet", alto=330))],
+        "P6": [("", barras_tasa(tabla_p6(tablas), "segmento", "Ranking de segmentos por tasa de abandono",
+                                "Segmento (contrato | internet)", horizontal=True, alto=400))],
+    }
+
+    for clave, p in C.PREGUNTAS.items():
+        with st.container(border=True):
+            st.subheader(f"{clave}. {p['pregunta']}")
+            izquierda, derecha = st.columns([3, 2], gap="large")
+            with izquierda:
+                lista = graficos[clave]
+                if len(lista) == 1:
+                    grafico(lista[0][1], key=f"resumen_{clave}")
+                else:
+                    # Si la pregunta tiene dos gráficos, se muestran en pestañas.
+                    pestanas = st.tabs([nombre for nombre, _ in lista])
+                    for i, (pestana, (_, fig)) in enumerate(zip(pestanas, lista)):
+                        with pestana:
+                            grafico(fig, key=f"resumen_{clave}_{i}")
+            with derecha:
+                st.markdown("**Respuesta**")
+                st.markdown(f"##### {p['respuesta_corta']}")
+                st.caption(f"💼 {p['decision']}")
+    st.caption("Línea gris punteada: tasa general de abandono (26,54 %). Pasa el cursor sobre las barras para ver el detalle.")
 
 
 def pagina_explorador(df, tablas):
@@ -367,9 +450,8 @@ def pagina_explorador(df, tablas):
     c4.metric("Ingreso mensual perdido", fmt(filtro["ingreso_mensual_perdido"].sum()))
     if len(filtro) < 100:
         st.caption("⚠️ Menos de 100 clientes: la tasa puede ser poco estable.")
-    st.plotly_chart(barras_tasa(tabla_abandono(filtro, "rango_antiguedad"), "rango_antiguedad",
-                                "Tasa de abandono por antigüedad (clientes filtrados)", "Antigüedad (meses)"),
-                    width="stretch")
+    grafico(barras_tasa(tabla_abandono(filtro, "rango_antiguedad"), "rango_antiguedad",
+                                "Tasa de abandono por antigüedad (clientes filtrados)", "Antigüedad (meses)"))
 
 
 def pagina_conclusiones(df, tablas):
@@ -394,6 +476,7 @@ errores = verificar(df, tablas)
 
 PAGINAS = {
     "Inicio": lambda: pagina_inicio(df, tablas, errores),
+    "Respuestas en resumen": lambda: pagina_respuestas(df, tablas),
     **{f"{k}. {p['titulo']}": (lambda f=f: f(df, tablas)) for (k, p), f in zip(
         C.PREGUNTAS.items(), [pagina_p1, pagina_p2, pagina_p3, pagina_p4, pagina_p5, pagina_p6])},
     "Explorador de segmentos": lambda: pagina_explorador(df, tablas),

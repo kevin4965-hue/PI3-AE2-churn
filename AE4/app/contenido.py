@@ -38,6 +38,7 @@ PREGUNTAS = {
     "P1": {
         "titulo": "Magnitud del abandono",
         "pregunta": "¿Qué proporción de clientes abandonó y cuánto ingreso mensual representa?",
+        "respuesta_corta": "Uno de cada cuatro clientes se fue (26,54 %), y esos clientes representaban el 30,50 % del ingreso mensual.",
         "metricas": [
             ("Tasa de abandono", "abandonos ÷ clientes × 100", "%"),
             ("Ingreso mensual perdido", "suma del cargo mensual de los clientes que abandonaron", "unidades monetarias / mes"),
@@ -54,6 +55,7 @@ PREGUNTAS = {
     "P2": {
         "titulo": "Tipo de contrato",
         "pregunta": "¿Cómo varía el abandono según el tipo de contrato?",
+        "respuesta_corta": "Los clientes con contrato mes a mes son los que más se van: 42,71 %, frente a solo 2,83 % con contrato de dos años.",
         "metricas": [
             ("Tasa de abandono por contrato", "abandonos del contrato ÷ clientes del contrato × 100", "%"),
             ("Participación en los abandonos", "abandonos del contrato ÷ total de abandonos × 100", "%"),
@@ -71,6 +73,7 @@ PREGUNTAS = {
     "P3": {
         "titulo": "Antigüedad",
         "pregunta": "¿Cómo varía el abandono según la antigüedad del cliente?",
+        "respuesta_corta": "Los clientes nuevos se van mucho más: 47,44 % en el primer año y solo 6,61 % después de cinco años.",
         "metricas": [
             ("Tasa de abandono por rango de antigüedad", "abandonos del rango ÷ clientes del rango × 100", "%"),
             ("Participación en los abandonos", "abandonos del rango ÷ total de abandonos × 100", "%"),
@@ -86,6 +89,7 @@ PREGUNTAS = {
     "P4": {
         "titulo": "Cargos",
         "pregunta": "¿Se diferencian en sus cargos los clientes que abandonan?",
+        "respuesta_corta": "Sí: los que se van pagan más cada mes (74,44 en promedio, frente a 61,27 de los que se quedan).",
         "metricas": [
             ("Tasa de abandono por cuartil de cargo mensual", "abandonos del cuartil ÷ clientes del cuartil × 100", "%"),
             ("Cargo mensual promedio y mediana", "promedio y mediana de cargo_mensual por grupo", "unidades monetarias / mes"),
@@ -106,6 +110,7 @@ PREGUNTAS = {
     "P5": {
         "titulo": "Método de pago e internet",
         "pregunta": "¿Hay diferencias según el método de pago y el servicio de internet?",
+        "respuesta_corta": "Se van más los que pagan con cheque electrónico (45,29 %) y los que tienen fibra óptica (41,89 %).",
         "metricas": [
             ("Tasa de abandono por método de pago", "abandonos del método ÷ clientes del método × 100", "%"),
             ("Tasa de abandono por servicio de internet", "abandonos del servicio ÷ clientes del servicio × 100", "%"),
@@ -122,6 +127,7 @@ PREGUNTAS = {
     "P6": {
         "titulo": "Segmentos prioritarios",
         "pregunta": "¿Qué segmentos (contrato × internet) concentran el abandono?",
+        "respuesta_corta": "El grupo más crítico es «Mes a mes | Fibra óptica»: se fue más de la mitad (54,61 %) y concentra el 62,17 % de los abandonos.",
         "metricas": [
             ("Tasa de abandono por segmento", "abandonos del segmento ÷ clientes del segmento × 100", "%"),
             ("Participación en abandonos e ingreso perdido", "valor del segmento ÷ total × 100", "%"),
