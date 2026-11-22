@@ -1,0 +1,15 @@
+﻿pregunta,metrica,calculo,unidad
+P1,Tasa de abandono,abandonos ÷ clientes × 100,%
+P1,Ingreso mensual perdido,suma del cargo mensual de los clientes que abandonaron,unidades monetarias / mes
+P1,Participación del ingreso perdido,ingreso mensual perdido ÷ ingreso mensual total × 100,%
+P2,Tasa de abandono por contrato,abandonos del contrato ÷ clientes del contrato × 100,%
+P2,Participación en los abandonos,abandonos del contrato ÷ total de abandonos × 100,%
+P3,Tasa de abandono por rango de antigüedad,abandonos del rango ÷ clientes del rango × 100,%
+P3,Participación en los abandonos,abandonos del rango ÷ total de abandonos × 100,%
+P4,Tasa de abandono por cuartil de cargo mensual,abandonos del cuartil ÷ clientes del cuartil × 100,%
+P4,Cargo mensual promedio y mediana,promedio y mediana de cargo_mensual por grupo,unidades monetarias / mes
+P4,Participación en el ingreso perdido,ingreso perdido del cuartil ÷ ingreso perdido total × 100,%
+P5,Tasa de abandono por método de pago,abandonos del método ÷ clientes del método × 100,%
+P5,Tasa de abandono por servicio de internet,abandonos del servicio ÷ clientes del servicio × 100,%
+P6,Tasa de abandono por segmento,abandonos del segmento ÷ clientes del segmento × 100,%
+P6,Participación en abandonos e ingreso perdido,valor del segmento ÷ total × 100,%
