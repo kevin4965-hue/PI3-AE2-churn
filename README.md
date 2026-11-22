@@ -8,6 +8,57 @@ según tipo de contrato, antigüedad y facturación.
 |---|---|---|
 | AE2 · Ideación, diseño y documentación de la necesidad | [`AE2/`](AE2/) | Necesidad, diseño, carga y descripción básica del dataset |
 | AE3 · Transformación y enriquecimiento de datos | [`AE3/`](AE3/) | Limpieza, variables derivadas, respuestas a las preguntas y tablas exportadas |
+| AE4 · Métricas y visualización de datos | [`AE4/`](AE4/) | Aplicación de Streamlit, gráficos, métricas e informe final en PDF |
+
+**Aplicación de Streamlit:** _[COMPLETAR con el enlace de Streamlit Community Cloud]_ ·
+**Informe final (PDF):** [`AE4/documento/Informe_Final_PI3_Abandono_Clientes.pdf`](AE4/documento/Informe_Final_PI3_Abandono_Clientes.pdf)
+
+## AE4 · Métricas y visualización
+
+### Aplicación de Streamlit
+
+La aplicación [`AE4/app/streamlit_app.py`](AE4/app/streamlit_app.py) presenta el proyecto en estas secciones:
+
+| Sección | Contenido |
+|---|---|
+| Inicio | Necesidad, pregunta de análisis, preguntas de negocio, dataset, indicadores generales y verificación de cifras |
+| P1 a P6 | Indicadores, gráficos interactivos, cálculo y unidad de cada métrica, respuesta, decisión que apoya, limitación y tabla de datos |
+| Explorador de segmentos | Filtros por contrato, internet, método de pago y antigüedad; métricas recalculadas en vivo |
+| Conclusiones | Conclusiones, recomendaciones y limitaciones |
+
+**Datos que usa:** `AE3/datos/churn_preparado.csv` y las tablas de `AE3/resultados/tablas/`. Al abrirse, la app recalcula
+las tablas desde el dataset y comprueba que coinciden con los CSV (mensaje «Cifras verificadas»). Los textos de cada
+pregunta están en [`AE4/app/contenido.py`](AE4/app/contenido.py), que comparten la app, el notebook y el informe.
+
+**Ejecutar localmente** (desde la raíz del repositorio, con las dependencias instaladas):
+
+```bash
+streamlit run AE4/app/streamlit_app.py
+```
+
+Se abre en http://localhost:8501.
+
+### Métricas y gráficos
+
+| Pregunta | Métrica principal (unidad) | Gráfico |
+|---|---|---|
+| P1 | Tasa de abandono (%) e ingreso mensual perdido (unidades monetarias/mes) | Barras 100 % apiladas: clientes vs. ingreso |
+| P2 | Tasa de abandono por tipo de contrato (%) | Barras con la tasa general como referencia |
+| P3 | Tasa de abandono por rango de antigüedad (%) | Barras por tramos de 12 meses |
+| P4 | Tasa por cuartil de cargo (%) y cargo mensual (unidades monetarias/mes) | Barras + diagrama de caja |
+| P5 | Tasa por método de pago y por servicio de internet (%) | Barras horizontales y verticales |
+| P6 | Tasa y participación por segmento contrato × internet (%) | Ranking en barras horizontales |
+
+El notebook [`AE4/notebooks/AE4_metricas_visualizacion.ipynb`](AE4/notebooks/AE4_metricas_visualizacion.ipynb) verifica
+las cifras, exporta [`AE4/resultados/metricas_por_pregunta.csv`](AE4/resultados/metricas_por_pregunta.csv) y genera los
+gráficos del informe en [`AE4/resultados/graficos/`](AE4/resultados/graficos/).
+
+### Publicación en Streamlit Community Cloud
+
+1. Entrar a https://share.streamlit.io con la cuenta de GitHub.
+2. **Create app → Deploy a public app from GitHub**.
+3. Repositorio `kevin4965-hue/PI3-AE2-churn`, rama `main`, archivo principal `AE4/app/streamlit_app.py`.
+4. En **Advanced settings**, elegir Python 3.12 y desplegar. Las dependencias se instalan desde `requirements.txt`.
 
 ## Necesidad
 
@@ -102,6 +153,18 @@ Los CSV se guardan en UTF-8 con BOM (`utf-8-sig`) para que Excel muestre bien la
 │   └── resultados/
 │       ├── resumen_dataframe_final.txt       # resumen .txt del DataFrame final
 │       └── tablas/                           # P1–P6 y bitácora de transformaciones (.csv)
+├── AE4/
+│   ├── app/
+│   │   ├── streamlit_app.py                  # aplicación de Streamlit
+│   │   └── contenido.py                      # textos compartidos: preguntas, métricas, respuestas
+│   ├── documento/
+│   │   ├── Informe_Final_PI3_Abandono_Clientes.docx
+│   │   └── Informe_Final_PI3_Abandono_Clientes.pdf   # informe completo del proyecto
+│   ├── notebooks/AE4_metricas_visualizacion.ipynb
+│   ├── presentacion/guion_presentacion.md    # guion de la presentación de 10 minutos
+│   └── resultados/
+│       ├── graficos/                         # gráficos PNG del informe
+│       └── metricas_por_pregunta.csv
 ├── src/
 │   └── clases_po/
 │       ├── __init__.py
@@ -140,6 +203,7 @@ Los CSV se guardan en UTF-8 con BOM (`utf-8-sig`) para que Excel muestre bien la
    ```bash
    jupyter notebook AE2/notebooks/AE2_exploracion_churn.ipynb
    jupyter notebook AE3/notebooks/AE3_transformacion_churn.ipynb
+   jupyter notebook AE4/notebooks/AE4_metricas_visualizacion.ipynb
    ```
 
    O desde la terminal, sin abrir Jupyter:
@@ -147,13 +211,15 @@ Los CSV se guardan en UTF-8 con BOM (`utf-8-sig`) para que Excel muestre bien la
    ```bash
    jupyter nbconvert --to notebook --execute --inplace AE2/notebooks/AE2_exploracion_churn.ipynb
    jupyter nbconvert --to notebook --execute --inplace AE3/notebooks/AE3_transformacion_churn.ipynb
+   jupyter nbconvert --to notebook --execute --inplace AE4/notebooks/AE4_metricas_visualizacion.ipynb
    ```
 
 4. El notebook de AE3 regenera en cada ejecución el dataset preparado, las tablas `.csv` y
    `resumen_dataframe_final.txt`. También comprueba que los totales y porcentajes sean consistentes y que los
    archivos exportados coincidan con lo calculado.
+5. Abrir la aplicación: `streamlit run AE4/app/streamlit_app.py`.
 
-El GitHub Action (`.github/workflows/ejecutar-ae2.yml`) ejecuta ambos notebooks en cada `push` a `main`.
+El GitHub Action (`.github/workflows/ejecutar-ae2.yml`) ejecuta los notebooks de AE2 y AE3 en cada `push` a `main`.
 
 ## Uso de las clases
 
