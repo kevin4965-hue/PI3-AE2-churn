@@ -1,6 +1,6 @@
 RESUMEN DEL DATAFRAME
 ============================================================
-Generado: 2026-11-22 21:45:17
+Generado: 2026-11-22 21:51:44
 
 Origen de los datos:
 - Dataset (Hugging Face): scikit-learn/churn-prediction
