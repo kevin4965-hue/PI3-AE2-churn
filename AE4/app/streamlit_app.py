@@ -127,7 +127,7 @@ def ficha_metricas(clave):
     """Muestra cómo se calcula cada métrica de la pregunta y en qué unidad se expresa."""
     with st.expander("📐 Métricas: cálculo y unidad"):
         st.dataframe(pd.DataFrame(C.PREGUNTAS[clave]["metricas"], columns=["Métrica", "Cálculo", "Unidad"]),
-                     hide_index=True, use_container_width=True)
+                     hide_index=True, width="stretch")
 
 
 def respuesta(clave):
@@ -142,7 +142,7 @@ def respuesta(clave):
 def ver_tabla(tabla, nombre_csv):
     """Tabla de datos del gráfico (para leer los valores exactos)."""
     with st.expander(f"🔢 Ver tabla de datos ({nombre_csv}.csv)"):
-        st.dataframe(tabla, hide_index=True, use_container_width=True)
+        st.dataframe(tabla, hide_index=True, width="stretch")
 
 
 def encabezado(clave):
@@ -173,7 +173,7 @@ def pagina_inicio(df, tablas, errores):
 
     st.subheader("Preguntas de negocio")
     st.dataframe(pd.DataFrame([(k, p["pregunta"]) for k, p in C.PREGUNTAS.items()], columns=["#", "Pregunta"]),
-                 hide_index=True, use_container_width=True)
+                 hide_index=True, width="stretch")
 
     st.subheader("Dataset")
     d = C.DATASET
@@ -215,7 +215,7 @@ def pagina_p1(df, tablas):
                  hover_data={"texto": False, "Porcentaje": ":.2f"})
     fig.update_traces(marker_line_color="white", marker_line_width=2, insidetextanchor="middle")
     fig.update_xaxes(range=[0, 100])
-    st.plotly_chart(estilo(fig, 300), use_container_width=True)
+    st.plotly_chart(estilo(fig, 300), width="stretch")
     ficha_metricas("P1")
     respuesta("P1")
     ver_tabla(tablas["P1_resumen_general"], "P1_resumen_general")
@@ -233,7 +233,7 @@ def pagina_p2(df, tablas):
     c2.metric("Participación en los abandonos", f"{fmt(mm['participacion_abandonos_pct'])} %")
     c3.metric("Participación en el ingreso perdido", f"{fmt(mm['participacion_ingreso_perdido_pct'])} %")
     st.plotly_chart(barras_tasa(t, "tipo_contrato", "Tasa de abandono por tipo de contrato", "Tipo de contrato"),
-                    use_container_width=True)
+                    width="stretch")
     ficha_metricas("P2")
     respuesta("P2")
     ver_tabla(t, "P2_abandono_por_contrato")
@@ -251,7 +251,7 @@ def pagina_p3(df, tablas):
     c3.metric("Abandonos del primer año", f"{fmt(primero['participacion_abandonos_pct'])} %",
               help="Participación del primer año en el total de abandonos")
     st.plotly_chart(barras_tasa(t, "rango_antiguedad", "Tasa de abandono por antigüedad del cliente",
-                                "Antigüedad (meses)"), use_container_width=True)
+                                "Antigüedad (meses)"), width="stretch")
     ficha_metricas("P3")
     respuesta("P3")
     ver_tabla(t, "P3_abandono_por_antiguedad")
@@ -271,7 +271,7 @@ def pagina_p4(df, tablas):
     izq, der = st.columns(2)
     with izq:
         st.plotly_chart(barras_tasa(t, "rango_cargo_mensual", "Tasa de abandono por cuartil de cargo mensual",
-                                    "Cuartil de cargo mensual (unidades monetarias/mes)"), use_container_width=True)
+                                    "Cuartil de cargo mensual (unidades monetarias/mes)"), width="stretch")
     with der:
         fig = px.box(df, x="cargo_mensual", y="abandono", color="abandono", orientation="h",
                      category_orders={"abandono": ["Sí", "No"]},
@@ -279,7 +279,7 @@ def pagina_p4(df, tablas):
                      labels={"cargo_mensual": "Cargo mensual (unidades monetarias/mes)", "abandono": "¿Abandonó?"},
                      title="Distribución del cargo mensual según abandono")
         fig.update_layout(showlegend=False)
-        st.plotly_chart(estilo(fig), use_container_width=True)
+        st.plotly_chart(estilo(fig), width="stretch")
     ficha_metricas("P4")
     respuesta("P4")
     ver_tabla(t, "P4a_abandono_por_cargo_mensual")
@@ -299,10 +299,10 @@ def pagina_p5(df, tablas):
     izq, der = st.columns(2)
     with izq:
         st.plotly_chart(barras_tasa(pago, "metodo_pago", "Tasa de abandono por método de pago", "Método de pago",
-                                    horizontal=True), use_container_width=True)
+                                    horizontal=True), width="stretch")
     with der:
         st.plotly_chart(barras_tasa(internet, "servicio_internet", "Tasa de abandono por servicio de internet",
-                                    "Servicio de internet"), use_container_width=True)
+                                    "Servicio de internet"), width="stretch")
     ficha_metricas("P5")
     respuesta("P5")
     ver_tabla(pago, "P5a_abandono_por_metodo_pago")
@@ -323,7 +323,7 @@ def pagina_p6(df, tablas):
                                                   "Participación en el ingreso perdido"], horizontal=True)
     if medida == "Tasa de abandono":
         st.plotly_chart(barras_tasa(t, "segmento", "Ranking de segmentos por tasa de abandono",
-                                    "Segmento (contrato | internet)", horizontal=True), use_container_width=True)
+                                    "Segmento (contrato | internet)", horizontal=True), width="stretch")
     else:
         col = "participacion_abandonos_pct" if medida == "Participación en los abandonos" else \
             "participacion_ingreso_perdido_pct"
@@ -336,7 +336,7 @@ def pagina_p6(df, tablas):
         fig.update_yaxes(categoryorder="array", categoryarray=list(orden["segmento"])[::-1])
         fig.update_xaxes(range=[0, orden[col].max() * 1.2], showgrid=True, gridcolor="rgba(128,128,128,0.18)")
         fig.update_traces(textposition="outside", cliponaxis=False, width=0.6)
-        st.plotly_chart(estilo(fig, 420), use_container_width=True)
+        st.plotly_chart(estilo(fig, 420), width="stretch")
     ficha_metricas("P6")
     respuesta("P6")
     ver_tabla(t.drop(columns="segmento"), "P6_ranking_segmentos")
@@ -369,7 +369,7 @@ def pagina_explorador(df, tablas):
         st.caption("⚠️ Menos de 100 clientes: la tasa puede ser poco estable.")
     st.plotly_chart(barras_tasa(tabla_abandono(filtro, "rango_antiguedad"), "rango_antiguedad",
                                 "Tasa de abandono por antigüedad (clientes filtrados)", "Antigüedad (meses)"),
-                    use_container_width=True)
+                    width="stretch")
 
 
 def pagina_conclusiones(df, tablas):

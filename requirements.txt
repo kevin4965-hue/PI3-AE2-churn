@@ -3,6 +3,6 @@ pandas>=2.0
 datasets
 notebook
 ipykernel
-streamlit>=1.40
+streamlit>=1.50
 plotly>=5.20
 matplotlib>=3.8
